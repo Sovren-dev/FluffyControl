@@ -20,7 +20,7 @@ import javax.swing.Timer;
  */
 public class FluffyControl {
     public static String username = System. getProperty("user.name");   
-    public static String version = "0.2.0";
+    public static String version = "0.2.1";
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         MainFrame mainFrame = new MainFrame();
