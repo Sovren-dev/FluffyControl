@@ -23,7 +23,15 @@ public class Tasks {
     private final Path savePath;
 
     public Tasks() {
-        savePath = Paths.get(System.getProperty("user.dir"), FILE_NAME);
+        String homeDir = System.getProperty("user.home", ".");
+        Path baseDir = Paths.get(homeDir, "fluffycontrol").normalize().toAbsolutePath();
+        try{
+            Files.createDirectories(baseDir);
+        } catch (IOException e){
+            // Fallback; If directory could not be created, use the current directory as a safe default
+            baseDir = Paths.get(".").normalize().toAbsolutePath();
+        }
+        this.savePath = baseDir.resolve(FILE_NAME).normalize();
     }
     
      // <editor-fold desc="Save And Load">
