@@ -20,12 +20,12 @@ import javax.swing.Timer;
  */
 public class FluffyControl {
     public static String username = System. getProperty("user.name");   
-    public static String version = "0.1.0";
+    public static String version = "0.2.1";
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         MainFrame mainFrame = new MainFrame();
         boolean running = true;
-        String timeUntilShutdown = "30";
+        String timeUntilShutdown = "40";
         
         onLaunch(timeUntilShutdown);
         /* // Unused
@@ -39,6 +39,10 @@ public class FluffyControl {
         }));
         */
         
+        
+       Tasks tasks = new Tasks();
+       UserData data = tasks.loadData();
+        
         // Fallback CLI Mode  // Maybe move this feature to a diffrent class to declutter main?        
         while(running){
             System.out.printf("%nWhat would you like to access?");
@@ -47,7 +51,19 @@ public class FluffyControl {
             switch(profile){
                 case "ins" -> {openWebBrowserTab("https://www.youtube.com/watch?v=nBdcQGPLejk");}                
                 case "test" -> {profiles(profile);}
-                case "programming" -> {profiles(profile);}
+                /*
+                case "rng" -> {tasks.randomTask(data, true);}                
+                case "taskcomplete" -> {
+                    System.out.printf("%nWhat type of task did you complete?: (light/normal/heavy): ");
+                    String difficulty = input.nextLine().toLowerCase();
+                    System.out.printf("%nWas it a milestone? (true/false): ");
+                    boolean milestone = input.nextBoolean();
+                    tasks.taskComplete(difficulty, milestone, data);
+                }
+                case "rewards" -> {tasks.chooseRewardCLI(input, data, 0);}
+                */
+                case "currency" -> {System.out.printf("%nCurrent Credits: %d  Current Tokens: %d",
+                        data.getCredits(), data.getTokens());}
                 case "shutdown" -> {timeUntilShutdown = "30"; shutdown(timeUntilShutdown);}                
                 case "quit" -> {running = false;}
                 case "help" -> {System.out.printf("Commands: shutdown, math, programming, quit, ins");}
@@ -75,7 +91,7 @@ public class FluffyControl {
     // Timer currently only used for shutdown
     private static void timerForShutdown(boolean sh, String timeUntilShutdown){
         warnForShutdown();
-        LocalTime endTime = LocalTime.of(23,50); // Create a date object (23,59)
+        LocalTime endTime = LocalTime.of(23,30); // Create a date object (23,59)
         Timer timer = new Timer(10000, e -> {
             LocalTime now = LocalTime.now();
             System.out.printf("%nDebug now: %tT", now);
@@ -91,9 +107,9 @@ public class FluffyControl {
     // Warns user before shutdown
     private static void warnForShutdown(){
         //  Create the date objects
-        LocalTime oneHour = LocalTime.of(22,50); // Default: (22,59)
-        LocalTime thirtyMin = LocalTime.of(23,20); // Default: (23,29)
-        LocalTime fiveMin = LocalTime.of(23,45); // Default: (23,54)
+        LocalTime oneHour = LocalTime.of(22,30); // Default: (22,59)
+        LocalTime thirtyMin = LocalTime.of(23,00); // Default: (23,29)
+        LocalTime fiveMin = LocalTime.of(23,30); // Default: (23,54)
         
         boolean[] fired = {false, false, false}; // Checks if event has been fired
         
@@ -121,7 +137,7 @@ public class FluffyControl {
                 System.out.printf("%n5 minutes left");                
                 //JOptionPane.showMessageDialog(null, "5 minutes Left until automatic shutdown");
                 //openWebBrowserTab("file:///C:/html/FluffyProject/FiveMin.html");
-                openHtmlFromJar("/html/FiveMin.html", "FiveMin");
+                //openHtmlFromJar("/html/FiveMin.html", "FiveMin");
                 openWebBrowserTab("https://www.youtube.com/watch?v=E5DFG2xwT00");                
             }
         });
@@ -255,4 +271,5 @@ public class FluffyControl {
             default -> {System.out.printf("%nError invalid profile.");}
         }
     }
+     // </editor-fold>    
 }
