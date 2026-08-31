@@ -59,8 +59,6 @@ public class FluffyControl {
     private static void warnSystem(){
         boolean[] fired = {false, false}; // Checks if event has been fired
 
-        String networkInterFace = "enp14s0";
-
         Timer timer = new Timer(30000, e -> {
             LocalTime now = LocalTime.now();
             boolean isDayTime = isBetween(now, LocalTime.of(8, 0), LocalTime.of(23,30));
