@@ -12,8 +12,7 @@ import javax.swing.*;
  */
 public class MainFrame extends JFrame {    
     private static final Random rand = new Random();
-    int r = 198, g = 198, b = 198;    
-    
+
     public MainFrame(){
         setTitle("Fluffy Control Panel v" + FluffyControl.version);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,39 +39,13 @@ public class MainFrame extends JFrame {
     // Links functions to buttons
     public static String GUILinker(String type) {
         switch(type){
-            case "activities" ->{
-                // Load json String instead here
-                String[] rng = {"Music + lying down 10 minutes",
-                    "Reading a physical book",
-                    "Drawing",
-                    "Watch one interesting video",
-                    "Try a new recipe",
-                    "Play a game for 20 minutes",
-                    "Practice a skill for 10 minutes",
-                    "Meditate for 5 minutes"};
-                int r = rand.nextInt(rng.length);
-                System.out.printf("%n%s | Number: %d%n", rng[r], r);
-                return rng[r];
-            }
-            case "rngNewGame" -> {
-                // Load json String instead here
-                String[] rngNewGame = {"Gray Zone Warfare",
-                    "Halls of Torment",
-                    "Ready Or Not",
-                    "Spiritfarer®: Farewell Edition",
-                    "FIGHT KNIGHT",
-                    "Islanders",
-                    "Hytale",
-                    "TIS-100", 
-                    "Steel Assault"};
-                int r = rand.nextInt(rngNewGame.length);
-                System.out.printf("%n%s | Number: %d%n", rngNewGame[r], r);
-            }
             case "rngGame" -> {
                 // Load json String instead here
                 String[] rngGame = {"Aegis Defenders",
                 "A.R.D. Alien Removal Division",
                 "ATLYSS",
+                "Hytale",
+                "Halls of Torment",
                 "Aviators",
                 "Backrooms: Escape Together",
                 "Bleed Runner",

@@ -2,8 +2,7 @@ package fluffycontrol;
 
 import java.io.IOException;
 public class NetworkController {
-    // eth0, wlan0, enp14s0
-    private static final String INTERFACE_NAME = "enp14s0";
+    private static final String INTERFACE_NAME = "enp14s0"; // or "eth0", "wlan0", etc.
 
     public static void turnOffNetwork() {
         try {

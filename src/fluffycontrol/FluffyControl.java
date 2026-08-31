@@ -19,7 +19,7 @@ import javax.swing.Timer;
  */
 public class FluffyControl {
     public static String username = System.getProperty("user.name");   
-    public static String version = "0.8.1-Linux";
+    public static String version = "0.9.0-Linux";
     public static boolean running = true;
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -39,7 +39,6 @@ public class FluffyControl {
                 default -> System.out.println("Invalid input, type help for commands");
             }
         }
-
 
         try {
         Thread.sleep(50);
