@@ -4,37 +4,36 @@ import java.io.IOException;
 public class NetworkController {
     private static final String INTERFACE_NAME = "enp14s0"; // or "eth0", "wlan0", etc.
 
-    public static void turnOffNetwork() {
-        try {
-            // Kopplar bort det specifika nätverkskortet
-            ProcessBuilder pb = new ProcessBuilder("nmcli", "device", "disconnect", INTERFACE_NAME);
-            Process process = pb.start();
-            int exitCode = process.waitFor();
-
-            if (exitCode == 0) {
-                System.out.println("Network disabled");
-            } else {
-                System.err.println("Network could not be disabled. Exit kod: " + exitCode);
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+    public static boolean turnOffNetwork() {
+        return runCommand("nmcli", "device", "disconnect", INTERFACE_NAME);
     }
 
-    public static void turnOnNetwork() {
+    public static boolean turnOnNetwork() {
+        return runCommand("nmcli", "device", "connect", INTERFACE_NAME);
+    }
+
+    public static boolean runCommand(String... command){
         try {
-            // Startar nätverkskortet igen
-            ProcessBuilder pb = new ProcessBuilder("nmcli", "device", "connect", INTERFACE_NAME);
-            Process process = pb.start();
+            Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
+
             int exitCode = process.waitFor();
 
             if (exitCode == 0) {
-                System.out.println("Network enabled.");
-            } else {
-                System.err.println("Network could not start. Exit code: " + exitCode);
+                System.out.println("Command successful.");
+                return true;
             }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+
+            System.err.println("Command failed. Exit code: " + exitCode);
+
+            return false;
+
+        } catch (IOException e) {
+            System.err.println("Could not execute command: " + e.getMessage());
+            return false;
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
         }
     }
 }

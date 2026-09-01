@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## 0.10.0]
+
+### Changed
+- Moved warnSystem into it's own class called RestrictionManager. 
+- Changed networkController to be less redundant. 
+- GUI now uses SwingUtilities.invokeLater
+
 ## [0.9.0]
 
 ### Added
