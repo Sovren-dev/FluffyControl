@@ -4,12 +4,24 @@ import java.io.IOException;
 public class NetworkController {
     private static final String INTERFACE_NAME = "enp14s0"; // or "eth0", "wlan0", etc.
 
+    // Fix this mess when you wake up :/
+
+    /*
     public static boolean turnOffNetwork() {
         return runCommand("nmcli", "device", "disconnect", INTERFACE_NAME);
     }
 
     public static boolean turnOnNetwork() {
         return runCommand("nmcli", "device", "connect", INTERFACE_NAME);
+    }
+    */
+
+    public static void turnOffNetwork() {
+        runCommand("nmcli", "device", "disconnect", INTERFACE_NAME);
+    }
+
+    public static void turnOnNetwork() {
+        runCommand("nmcli", "device", "connect", INTERFACE_NAME);
     }
 
     public static boolean runCommand(String... command){

@@ -1,12 +1,9 @@
 package fluffycontrol;
 
-import java.awt.Color;
 import java.awt.Desktop;
-import java.awt.Font;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalTime;
 import java.util.Scanner;
 import javax.swing.*;
 
