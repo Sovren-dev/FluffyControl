@@ -1,6 +1,6 @@
 # FluffyControl
 
-Java application design to help me keep a healthy sleep schedule. With some extra experimental features.
+Java application designed to help me keep a healthy sleep schedule. With some extra experimental features.
 It alerts user when it's time to head to bed or turn of the computer. It will automatically disable users network connection to prevent late night browsing. When daylight returns it automatically restores the connection
 
 ## Main Features
