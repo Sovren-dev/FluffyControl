@@ -1,9 +1,14 @@
 package fluffycontrol;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.Random;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
 
 /**
@@ -12,14 +17,20 @@ import javax.swing.*;
  */
 public class MainFrame extends JFrame {    
     private static final Random rand = new Random();
+    private Point mouseClickPoint; // Store initial mouse position on click
+    private final Font menuFont = new Font("Monospaced", Font.BOLD, 12);
+
+    private final Color backgroundColor = new Color(0,128,128);
+    private final  Color panelColor = new Color(174, 178, 188);
+    private final Color phosphorGreen = new Color(0, 255, 65);
 
     public MainFrame(){
         setTitle("Fluffy Control Panel v" + FluffyControl.version);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800 , 500);
+        setSize(720 , 500);
         setLocationRelativeTo(null);
-        //setLayout(null);
-        setResizable(false);        
+        setUndecorated(true);
+        setResizable(false);
         // Icon
         URL resource = MainFrame.class.getResource("/res/FluffyControlIcon.png");
         if (resource != null) {
@@ -28,14 +39,129 @@ public class MainFrame extends JFrame {
         } else {
             System.err.println("Could not find IconImage");
         }
-        // Creates GUI
-        menuJPanel panel = new menuJPanel();
-        panel.setBackground(Color.decode("#1e2022"));
-        add(panel);
-        
+
+        JPanel rootPanel = new JPanel(new BorderLayout(10, 10));
+        rootPanel.setBackground(backgroundColor);
+        rootPanel.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
+        setContentPane(rootPanel);
+
+        //<editor-fold desc="Top Menu Bar">
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.setBackground(panelColor);
+        menuBar.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+
+        JLabel label = new JLabel("  " + "FluffyControl");
+        label.setFont(menuFont);
+        menuBar.add(label);
+
+        menuBar.add(Box.createHorizontalGlue());
+
+        // Window buttons
+        JButton hideBtn = new JButton("-");
+        hideBtn.setFont(menuFont);
+        hideBtn.setFocusPainted(false);
+        hideBtn.addActionListener(e -> MainFrame.this.setExtendedState(MainFrame.this.getExtendedState() | Frame.ICONIFIED));
+        menuBar.add(hideBtn);
+
+        JButton closeBtn = new JButton("X");
+        closeBtn.setFont(menuFont);
+        closeBtn.setFocusPainted(false);
+        closeBtn.addActionListener(e -> System.exit(0));
+        menuBar.add(closeBtn);
+
+        setJMenuBar(menuBar);
+
+        // Drag behavior
+        MouseAdapter dragAdapter = new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // Save mouse position relative to the window frame
+                mouseClickPoint = e.getPoint();
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                // Calculate current screen coordinates minus click offset
+                Point currentScreenLocation = e.getLocationOnScreen();
+                setLocation(
+                        currentScreenLocation.x - mouseClickPoint.x,
+                        currentScreenLocation.y - mouseClickPoint.y
+                );
+            }
+        };
+        menuBar.addMouseListener(dragAdapter);
+        menuBar.addMouseMotionListener(dragAdapter);
+        // </editor-fold>
+
+        //<editor-fold desc="Experimental Features">
+        JPanel mainPanel = new JPanel(new BorderLayout(10,10));
+        mainPanel.setBackground(panelColor);
+
+        mainPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createBevelBorder(BevelBorder.RAISED),
+                BorderFactory.createEmptyBorder(10,10,10,10)
+        ));
+
+        // Section Box
+        JPanel formGroup = new JPanel(new GridLayout(2, 2, 8, 8));
+        formGroup.setBackground(panelColor);
+        TitledBorder groupBorder = BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
+                " [ Experimental Features ] "
+        );
+        groupBorder.setTitleFont(new Font("Monospaced", Font.BOLD, 12));
+        formGroup.setBorder(groupBorder);
+
+        // Objects Here:
+        JTextField outputField = createTextField(" Output");
+        JButton randGameBtn = createButton("[ Random Game ]");
+        randGameBtn.addActionListener(e -> {
+            // Fetch text
+            String text = MainFrame.GUILinker("rngGame");
+            // Update text in output
+            outputField.setText(" " + text);
+        });
+
+        formGroup.add(outputField);
+        formGroup.add(randGameBtn);
+        mainPanel.add(formGroup, BorderLayout.NORTH);
+
+        rootPanel.add(mainPanel, BorderLayout.CENTER);
+
+        //</editor-fold>
+
         setVisible(true);
     }
-    
+
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(menuFont);
+        label.setForeground(Color.BLACK);
+        return label;
+    }
+
+    private JTextField createTextField(String text) {
+        JTextField field = new JTextField(text);
+        field.setFont(menuFont);
+        field.setBackground(Color.WHITE);
+        field.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        return field;
+    }
+
+    private JButton createButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(menuFont);
+        button.setBackground(panelColor);
+        button.setForeground(Color.BLACK);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createBevelBorder(BevelBorder.RAISED),
+                BorderFactory.createEmptyBorder(4, 12, 4, 12)
+        ));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
+    }
+
     // Links functions to buttons
     public static String GUILinker(String type) {
         switch(type){

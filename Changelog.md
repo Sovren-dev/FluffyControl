@@ -4,7 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
-## 0.10.0]
+## [0.11.0]
+
+### Changed
+- warnWindow is now in its own class
+
+### Added
+- Now a themed GUI with it's own Minimize, Exit and window drag.
+- SetsLookAndFeel before SwingUtilities.invokeLater is called
+
+### Removed
+- menuJPanel
+
+## [0.10.0]
 
 ### Changed
 - Moved warnSystem into it's own class called RestrictionManager. 

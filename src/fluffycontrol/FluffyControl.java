@@ -13,13 +13,10 @@ import javax.swing.*;
  */
 public class FluffyControl {
     public static String username = System.getProperty("user.name");   
-    public static String version = "0.10.0-Linux";
+    public static String version = "0.11.0-Linux";
     public static boolean running = true;
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        //MainFrame mainFrame = new MainFrame();
-        SwingUtilities.invokeLater(MainFrame::new);
-
         onLaunch();
         
         // Fallback CLI Mode
@@ -48,7 +45,17 @@ public class FluffyControl {
     }
 
     private static void onLaunch() {        
-        System.out.printf("Welcome to Fluffy Control version %s, %s!%n",version, username);        
+        System.out.printf("Welcome to Fluffy Control version %s, %s!%n",version, username);
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+        } catch (Exception e) {
+            // Fallback to cross-platform Metal if Motif isn't supported
+            try {
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            } catch (Exception ignored) {}
+        }
+        SwingUtilities.invokeLater(MainFrame::new);
+
         RestrictionManager.restrictionSystem();
     }
 
