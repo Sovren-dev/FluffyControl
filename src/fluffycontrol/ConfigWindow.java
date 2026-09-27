@@ -1,7 +1,6 @@
 package fluffycontrol;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -32,7 +31,7 @@ public class ConfigWindow extends JFrame{
     private final Color phosphorGreen = new Color(0, 255, 65);
 
 
-    public ConfigWindow() {
+    public ConfigWindow(Gson gson) {
         setTitle("Fluffy Control Config Panel v" + FluffyControl.version);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(720, 500);
@@ -40,8 +39,7 @@ public class ConfigWindow extends JFrame{
         setUndecorated(true);
         setResizable(false);
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Config loadedConfig = Config.loadFile(gson, new File(Config.configFile));
+        Config loadedConfig = Config.loadFile(gson, new File(Config.configFile), true);
 
         JPanel rootPanel = new JPanel(new BorderLayout(10, 10));
         rootPanel.setBackground(backgroundColor);
@@ -69,7 +67,9 @@ public class ConfigWindow extends JFrame{
         JButton closeBtn = new JButton("X");
         closeBtn.setFont(menuFont);
         closeBtn.setFocusPainted(false);
-        closeBtn.addActionListener(e -> ConfigWindow.this.dispose());
+        closeBtn.addActionListener(e -> {
+            MainFrame.theConfigWindow = null; // Makes sure that config window can be created again
+            ConfigWindow.this.dispose();});
         menuBar.add(closeBtn);
 
         setJMenuBar(menuBar);
@@ -118,6 +118,7 @@ public class ConfigWindow extends JFrame{
 
         // Objects Here:
         // Autostart config
+        /* UI and saving code for future autostart feature
         JLabel autoStartLabel = createLabel("    AutoStart:");
         Boolean[] check = {true,false};
         JList<Boolean> autoStartList = new JList<>(check);
@@ -137,7 +138,7 @@ public class ConfigWindow extends JFrame{
                 }
             }
         });
-
+         */
 
         // Bedtime config
         JLabel bedtimeLabel = createLabel("    Bedtime:");
@@ -148,20 +149,20 @@ public class ConfigWindow extends JFrame{
         } else {
             bedtimeField.setText("09:00");
         }
-        /*
+
         bedtimeField.addActionListener(e -> {
             String input = bedtimeField.getText().trim();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
             try{
                 LocalTime validatedTime = LocalTime.parse(input, formatter);
                 System.out.println(LogColors.BLUE + LogColors.BOLD + "Time set: " + validatedTime + LogColors.RESET);
-                loadedConfig.setBedtime(validatedTime); // Temp save
+                //loadedConfig.setBedtime(validatedTime); // Temp save
             } catch (DateTimeException ex) {
                 bedtimeField.setText("24-hour HH:mm format only!");
                 System.out.println(LogColors.YELLOW + LogColors.BOLD + "[WARN] Invalid format. 24-Hour HH:mm format only"  + LogColors.RESET);
             }
         });
-        */
+
 
         // Wake up config
         JLabel wakeupLabel = createLabel("    Wake-up:");
@@ -172,24 +173,23 @@ public class ConfigWindow extends JFrame{
         } else {
             wakeupField.setText("09:00");
         }
-        /*
+
         wakeupField.addActionListener(e -> {
             String input = wakeupField.getText().trim();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
             try{
                 LocalTime validatedTime = LocalTime.parse(input, formatter);
                 System.out.println(LogColors.BLUE + LogColors.BOLD + "Time set: " + validatedTime + LogColors.RESET);
-                loadedConfig.setWakeup(validatedTime); // Temp save
+                //loadedConfig.setWakeup(validatedTime); // Temp save
             } catch (DateTimeException ex) {
                 wakeupField.setText("24-hour HH:mm format only!");
                 System.out.println(LogColors.YELLOW + LogColors.BOLD + "[WARN] Invalid format. 24-Hour HH:mm format only"  + LogColors.RESET);
             }
         });
-        */
 
         // Interface config
         JLabel interfaceNameLabel = createLabel("    Network interface:");
-        String[] interfaceName = {"enp14s0", "eth0", "wlan0"};
+        String[] interfaceName = {"enp14s0", "eth0", "wlan0", "wlp15s0"};
         JList<String> interfaceNameList= new JList<>(interfaceName);
         interfaceNameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         interfaceNameList.setSelectedValue(loadedConfig.getINTERFACE_NAME(), true); // pre-selects the last selection
@@ -208,8 +208,8 @@ public class ConfigWindow extends JFrame{
             }
         });
 
-        formGroup.add(autoStartLabel);
-        formGroup.add(autoStartList);
+        //formGroup.add(autoStartLabel);
+        //formGroup.add(autoStartList);
         formGroup.add(bedtimeLabel);
         formGroup.add(bedtimeField);
         formGroup.add(wakeupLabel);
@@ -223,12 +223,8 @@ public class ConfigWindow extends JFrame{
         JButton saveButton = createButton("[Save]");
         saveButton.addActionListener(e -> {
             // Save code here then ->
-            String jsonOutput = gson.toJson(Config.defaultConfig);
+            boolean canSave = true;
 
-
-            // This needs to be saved both when pressing enter and when pressing save.
-            // Make a popup if the entered time is invalid and don't close settings tab until it is fixed unless cancel is pressed
-            /*
             String input = bedtimeField.getText().trim();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
             try{
@@ -238,6 +234,7 @@ public class ConfigWindow extends JFrame{
             } catch (DateTimeException ex) {
                 bedtimeField.setText("24-hour HH:mm format only!");
                 System.out.println(LogColors.YELLOW + LogColors.BOLD + "[WARN] Invalid format. 24-Hour HH:mm format only"  + LogColors.RESET);
+                canSave = false;
             }
             String input2 = wakeupField.getText().trim();
             try{
@@ -247,16 +244,26 @@ public class ConfigWindow extends JFrame{
             } catch (DateTimeException ex) {
                 wakeupField.setText("24-hour HH:mm format only!");
                 System.out.println(LogColors.YELLOW + LogColors.BOLD + "[WARN] Invalid format. 24-Hour HH:mm format only"  + LogColors.RESET);
+                canSave = false;
             }
-            */
 
             // Actual save
-            jsonOutput = gson.toJson(loadedConfig);
+            if (canSave){
+            String jsonOutput = gson.toJson(loadedConfig);
             Config.writeToFile(new File(Config.configFile), jsonOutput);
-            ConfigWindow.this.dispose();});
+            MainFrame.theConfigWindow = null; // Makes sure that config window can be created again
+            ConfigWindow.this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid format. Use 24-hour HH:mm format only.","Warning", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
 
         JButton cancelButton = createButton("[Cancel]");
-        cancelButton.addActionListener(e -> ConfigWindow.this.dispose());
+        cancelButton.addActionListener(e -> {
+            MainFrame.theConfigWindow = null; // Makes sure that config window can be created again
+            ConfigWindow.this.dispose();
+        });
 
         buttonPanel.add(saveButton);
         buttonPanel.add(cancelButton);

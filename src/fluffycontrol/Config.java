@@ -14,23 +14,16 @@ import java.time.LocalTime;
  */
 public class Config {
     // Test config options may not be in final version
-
-    private String theme;
     private boolean autoStart;
     private LocalTime bedtime;
     private LocalTime wakeup;
     private String INTERFACE_NAME; // or "eth0", "wlan0", etc. // Wi-Fi, Ethernet
 
-    public Config(String theme, boolean autoStart, LocalTime bedtime, LocalTime wakeup, String INTERFACE_NAME) {
-        this.theme = theme;
+    public Config(boolean autoStart, LocalTime bedtime, LocalTime wakeup, String INTERFACE_NAME) {
         this.autoStart = autoStart;
         this.bedtime = bedtime;
         this.wakeup = wakeup;
         this.INTERFACE_NAME = INTERFACE_NAME;
-    }
-
-    public void setTheme(String theme) {
-        this.theme = theme;
     }
 
     public void setAutoStart(boolean autoStart) {
@@ -65,24 +58,21 @@ public class Config {
         return INTERFACE_NAME;
     }
 
-    public static String getConfigFile() {
-        return configFile;
-    }
-
     @Override
     public String toString() {
-        return "Theme: " + theme + " autoStart: " + autoStart + " bedtime: "
-                + bedtime + " wakeup: " + wakeup + " INTERFACE_NAME: " + INTERFACE_NAME;
+        return "AutoStart: " + autoStart + " bedtime: " + bedtime + " wakeup: " + wakeup + " INTERFACE_NAME: " + INTERFACE_NAME;
     }
 
     public static String configFile = "config.json";
 
-    public static Config loadFile(Gson gson, File fileName) {
+    public static Config loadFile(Gson gson, File fileName, boolean debug) {
         Config config = null;
         try (FileReader reader = new FileReader(fileName)) {
             config = gson.fromJson(reader, Config.class);
-            System.out.println(LogColors.GREEN + LogColors.BOLD + "Successfully read config file" + LogColors.RESET);
-            System.out.println("DEBUG: " + config);
+            if(debug) {
+                System.out.println(LogColors.GREEN + LogColors.BOLD + "Successfully read config file" + LogColors.RESET);
+                System.out.println("DEBUG: " + config);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,7 +88,7 @@ public class Config {
         }
     }
 
-    public static Config defaultConfig = new Config("default",
+    public static Config defaultConfig = new Config(
             false,
             LocalTime.of(23, 30),
             LocalTime.of(9, 0),

@@ -1,53 +1,18 @@
 package fluffycontrol;
 
+import com.google.gson.Gson;
+
+import java.io.File;
 import java.io.IOException;
 public class NetworkController {
-    public static String INTERFACE_NAME = "enp14s0"; // or "eth0", "wlan0", etc.
+    public static String INTERFACE_NAME = "enp14s0"; // or "eth0", "wlan0", "wlp15s0", etc.
 
-    // Fix this mess when you wake up :/
-
-    /*
-    public static boolean turnOffNetwork() {
-        return runCommand("nmcli", "device", "disconnect", INTERFACE_NAME);
+    public static void turnOffNetwork(Gson gson) {
+        runCommand("nmcli", "device", "disconnect", getInterface(gson));
     }
 
-    public static boolean turnOnNetwork() {
-        return runCommand("nmcli", "device", "connect", INTERFACE_NAME);
-    }
-
-
-    public static boolean runCommand(String... command){
-        try {
-            Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
-
-            int exitCode = process.waitFor();
-
-            if (exitCode == 0) {
-                System.out.println("Command successful.");
-                return true;
-            }
-
-            System.err.println("Command failed. Exit code: " + exitCode);
-
-            return false;
-
-        } catch (IOException e) {
-            System.err.println("Could not execute command: " + e.getMessage());
-            return false;
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return false;
-        }
-    }
-    */
-
-    public static void turnOffNetwork() {
-        runCommand("nmcli", "device", "disconnect", INTERFACE_NAME);
-    }
-
-    public static void turnOnNetwork() {
-        runCommand("nmcli", "device", "connect", INTERFACE_NAME);
+    public static void turnOnNetwork(Gson gson) {
+        runCommand("nmcli", "device", "connect", getInterface(gson));
     }
 
     public static void runCommand(String... command){
@@ -57,7 +22,7 @@ public class NetworkController {
             int exitCode = process.waitFor();
 
             if (exitCode == 0) {
-                System.out.println("Command successful.");
+                System.out.println(LogColors.BLUE + LogColors.BOLD + "Network Command successful." + LogColors.RESET);
                 return;
             }
 
@@ -69,5 +34,10 @@ public class NetworkController {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    public static String getInterface(Gson gson) {
+        Config loadedConfig = Config.loadFile(gson, new File(Config.configFile), false);
+        return loadedConfig.getINTERFACE_NAME();
     }
 }

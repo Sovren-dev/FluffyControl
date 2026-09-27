@@ -29,15 +29,12 @@ public class FluffyControl {
             switch(profile){
                 case "ins" -> openWebBrowserTab("https://www.youtube.com/watch?v=nBdcQGPLejk");
                 case "quit" -> running = false;
-                case "help" -> System.out.print("Commands: ins, quit");
-                case "reset-to-day" -> {
-                    RestrictionManager.fired[0] = false;
-                    RestrictionManager.fired[1] = true;
-                }
-                default -> System.out.println("Invalid input, type help for commands");
+                case "help" -> System.out.print(LogColors.BLUE + LogColors.BOLD +"Commands: ins, quit" + LogColors.RESET);
+                default -> System.out.println(LogColors.YELLOW + LogColors.BOLD + "[WARN] Invalid input, type help for commands" + LogColors.RESET);
             }
         }
 
+        RestrictionManager.scheduler.shutdown();
         try {
         Thread.sleep(50);
         } catch (InterruptedException e) {
@@ -52,8 +49,8 @@ public class FluffyControl {
         String jsonOutput = gson.toJson(Config.defaultConfig);
         Config.doesConfigExist(gson, jsonOutput);
 
-
-        System.out.printf("Welcome to Fluffy Control version %s, %s!%n",version, username);
+        System.out.printf(LogColors.PURPLE + LogColors.BOLD + "Welcome to Fluffy Control version %s, %s!%n",version, username + LogColors.RESET);
+        // GUI Setup
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         } catch (Exception e) {
@@ -62,9 +59,9 @@ public class FluffyControl {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             } catch (Exception ignored) {}
         }
-        SwingUtilities.invokeLater(MainFrame::new);
+        SwingUtilities.invokeLater(() -> new MainFrame(gson));
 
-        RestrictionManager.restrictionSystem();
+        RestrictionManager.restrictionSystem(gson, jsonOutput);
     }
 
     // <editor-fold desc="Utility Launchers">

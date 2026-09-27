@@ -51,7 +51,6 @@ public class warnWindow extends JFrame{
         JButton closeBtn = new JButton("X");
         closeBtn.setFont(menuFont);
         closeBtn.setFocusPainted(false);
-        //closeBtn.addActionListener(e -> System.exit(0));
         closeBtn.addActionListener(e -> warnWindow.this.dispose());
         menuBar.add(closeBtn);
 

@@ -1,14 +1,22 @@
 package fluffycontrol;
 
+import com.google.gson.Gson;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+
+import static fluffycontrol.Config.configFile;
 
 
 /**
@@ -24,7 +32,9 @@ public class MainFrame extends JFrame {
     private final  Color panelColor = new Color(174, 178, 188);
     private final Color phosphorGreen = new Color(0, 255, 65);
 
-    public MainFrame(){
+    public static ConfigWindow theConfigWindow = null;
+
+    public MainFrame(Gson gson){
         setTitle("Fluffy Control Panel v" + FluffyControl.version);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(720 , 500);
@@ -39,9 +49,6 @@ public class MainFrame extends JFrame {
         } else {
             System.err.println("Could not find IconImage");
         }
-
-        new ConfigWindow(); // REMOVE this once you have a button for config
-
 
         JPanel rootPanel = new JPanel(new BorderLayout(10, 10));
         rootPanel.setBackground(backgroundColor);
@@ -69,7 +76,10 @@ public class MainFrame extends JFrame {
         JButton closeBtn = new JButton("X");
         closeBtn.setFont(menuFont);
         closeBtn.setFocusPainted(false);
-        closeBtn.addActionListener(e -> System.exit(0));
+        closeBtn.addActionListener(e -> {
+            RestrictionManager.scheduler.shutdown();
+            System.exit(0);
+        });
         menuBar.add(closeBtn);
 
         setJMenuBar(menuBar);
@@ -120,7 +130,7 @@ public class MainFrame extends JFrame {
         JButton randGameBtn = createButton("[ Random Game ]");
         randGameBtn.addActionListener(e -> {
             // Fetch text
-            String text = MainFrame.GUILinker("rngGame");
+            String text = MainFrame.GUILinker(gson, "rngGame");
             // Update text in output
             outputField.setText(" " + text);
         });
@@ -128,6 +138,21 @@ public class MainFrame extends JFrame {
         formGroup.add(outputField);
         formGroup.add(randGameBtn);
         mainPanel.add(formGroup, BorderLayout.NORTH);
+
+        // Open config
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+        buttonPanel.setBackground(panelColor);
+        JButton configButton = createButton("[Config");
+        configButton.addActionListener(e -> {
+            // Check if configWindow is open
+            if(theConfigWindow == null){
+                theConfigWindow = new ConfigWindow(gson);
+            } else {
+                System.out.println(LogColors.YELLOW + LogColors.BOLD + "[WARN] ConfigWindow already open" + LogColors.RESET);
+            }
+        });
+        buttonPanel.add(configButton);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         rootPanel.add(mainPanel, BorderLayout.CENTER);
 
@@ -166,12 +191,9 @@ public class MainFrame extends JFrame {
     }
 
     // Links functions to buttons
-    public static String GUILinker(String type) {
-        switch(type){
-            case "rngGame" -> {
-                // Load json String instead here
-                //String[] rngGame = Gson.
-                String[] rngGame = {"Aegis Defenders",
+    public static String GUILinker(Gson gson , String type) {
+        //<editor-fold desc="rngGame Defaults">
+        String[] rngDefault = {"Aegis Defenders",
                 "A.R.D. Alien Removal Division",
                 "ATLYSS",
                 "Hytale",
@@ -288,6 +310,30 @@ public class MainFrame extends JFrame {
                 "Moss VR 2",
                 "Heroes of the Storm",
                 "World of Warcraft"};
+        //</editor-fold>
+        switch(type){
+            case "rngGame" -> {
+                // Load JSON
+                String[] rngGame = rngDefault;
+                if(new File("rngGame.data").isFile()){
+                    try(FileReader reader = new FileReader("rngGame.data")){
+                        rngGame = gson.fromJson(reader, String[].class);
+                    } catch (IOException e){
+                        e.printStackTrace();
+                    }
+                } else {
+                    try (FileWriter file = new FileWriter("rngGame.data")) {
+                        file.write(gson.toJson(rngDefault));
+                        System.out.println(LogColors.GREEN + LogColors.BOLD + "Successfully written defaults to " + "rngGame.data" + LogColors.RESET);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // Use defaults if file is empty/corrupted
+                if(rngGame == null || rngGame.length == 0){
+                    rngGame = rngDefault;
+                }
                 int r = rand.nextInt(rngGame.length);
                 System.out.printf("%n%s | Number: %d%n", rngGame[r], r);
                 return rngGame[r];

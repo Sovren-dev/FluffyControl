@@ -1,37 +1,46 @@
 package fluffycontrol;
 
+import com.google.gson.Gson;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.time.LocalTime;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static fluffycontrol.FluffyControl.username;
 
 public class RestrictionManager {
-    public static boolean[] fired = {false, false}; // Checks if event has been fired
-    public static void restrictionSystem(){
+    private static boolean isNight = false;
 
-        Timer timer = new Timer(30000, e -> {
+    public static ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+    public static void restrictionSystem(Gson gson, String jsonOutput){
+        scheduler.scheduleAtFixedRate(() -> {
             LocalTime now = LocalTime.now();
-            boolean isDayTime = isBetween(now, LocalTime.of(8, 0), LocalTime.of(23,30));
+
+            Config loadedConfig = Config.loadFile(gson, new File(Config.configFile),false);
+            LocalTime bedtime = loadedConfig.getBedtime();
+            LocalTime wakeUpTime = loadedConfig.getWakeup();
+
+            boolean isDayTime = isBetween(now, wakeUpTime, bedtime);
+
             // Nighttime. After 23:30 and before 8:00
-            if (!isDayTime && !fired[0]) {
+            if (!isDayTime && !isNight) {
                 System.out.println("Get to bed");
                 SwingUtilities.invokeLater(warnWindow::new);
                 // Turn off Ethernet
-                NetworkController.turnOffNetwork();
-                fired[0] = true; // Lock night event
-                fired[1] = false; // Unlock day event
-            }
-
-            else if (isDayTime && !fired[1]) {
+                NetworkController.turnOffNetwork(gson);
+                isNight = true;
+            }else if (isDayTime && isNight) {
                 System.out.printf("%nGood morning, %s! ", username);
                 // turn on Ethernet
-                NetworkController.turnOnNetwork();
-                fired[1] = true; // Lock day event
-                fired[0] = false; // Unlock night event
+                NetworkController.turnOnNetwork(gson);
+                isNight = false;
             }
-        });
-        timer.start();
+        }, 0,30, TimeUnit.SECONDS);
     }
 
     // TimerCheck Helper
