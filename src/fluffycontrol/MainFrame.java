@@ -75,6 +75,7 @@ public class MainFrame extends JFrame {
         closeBtn.setFont(menuFont);
         closeBtn.setFocusPainted(false);
         closeBtn.addActionListener(e -> {
+            System.out.printf("%nQuitting program...%n");
             RestrictionManager.scheduler.shutdown();
             System.exit(0);
         });
