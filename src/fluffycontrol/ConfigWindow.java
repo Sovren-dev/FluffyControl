@@ -22,7 +22,6 @@ import java.util.Random;
  * @author Sovren
  */
 public class ConfigWindow extends JFrame{
-    private static final Random rand = new Random();
     private Point mouseClickPoint; // Store initial mouse position on click
     private final Font menuFont = new Font("Monospaced", Font.BOLD, 12);
 
@@ -125,20 +124,17 @@ public class ConfigWindow extends JFrame{
         autoStartList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         autoStartList.setSelectedValue(loadedConfig.isAutoStart(), true); // pre-selects the last selection
 
-        autoStartList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if(!e.getValueIsAdjusting()){
-                    Boolean strAutoStart = autoStartList.getSelectedValue();
-                    if(strAutoStart != null) {
-                        System.out.println(LogColors.BLUE + LogColors.BOLD + "Selected: " + strAutoStart + LogColors.RESET);
-                        // Change to auto start here / remove auto start here
-                        loadedConfig.setAutoStart(strAutoStart); // Temp save
-                    }
+        autoStartList.addListSelectionListener(e -> {
+            if(!e.getValueIsAdjusting()){
+                Boolean strAutoStart = autoStartList.getSelectedValue();
+                if(strAutoStart != null) {
+                    System.out.println(LogColors.BLUE + LogColors.BOLD + "Selected: " + strAutoStart + LogColors.RESET);
+                    // Change to auto start here / remove auto start here
+                    loadedConfig.setAutoStart(strAutoStart); // Temp save
                 }
             }
         });
-         */
+        */
 
         // Bedtime config
         JLabel bedtimeLabel = createLabel("    Bedtime:");
@@ -194,16 +190,13 @@ public class ConfigWindow extends JFrame{
         interfaceNameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         interfaceNameList.setSelectedValue(loadedConfig.getINTERFACE_NAME(), true); // pre-selects the last selection
 
-        interfaceNameList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if(!e.getValueIsAdjusting()){
-                    String strInterfaceName = interfaceNameList.getSelectedValue();
-                    if(strInterfaceName != null) {
-                        System.out.println(LogColors.BLUE + LogColors.BOLD + "Selected Interface: " + strInterfaceName + LogColors.RESET);
-                        NetworkController.INTERFACE_NAME = strInterfaceName; // Change the network interfaced used
-                        loadedConfig.setINTERFACE_NAME(strInterfaceName); // Temp save
-                    }
+        interfaceNameList.addListSelectionListener(e -> {
+            if(!e.getValueIsAdjusting()){
+                String strInterfaceName = interfaceNameList.getSelectedValue();
+                if(strInterfaceName != null) {
+                    System.out.println(LogColors.BLUE + LogColors.BOLD + "Selected Interface: " + strInterfaceName + LogColors.RESET);
+                    NetworkController.INTERFACE_NAME = strInterfaceName; // Change the network interfaced used
+                    loadedConfig.setINTERFACE_NAME(strInterfaceName); // Temp save
                 }
             }
         });

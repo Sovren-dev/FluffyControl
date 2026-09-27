@@ -16,8 +16,6 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import static fluffycontrol.Config.configFile;
-
 
 /**
  * date: 2026-02-17
@@ -319,14 +317,14 @@ public class MainFrame extends JFrame {
                     try(FileReader reader = new FileReader("rngGame.data")){
                         rngGame = gson.fromJson(reader, String[].class);
                     } catch (IOException e){
-                        e.printStackTrace();
+                        System.err.println("Failed to read configuration file: " + e.getMessage());
                     }
                 } else {
                     try (FileWriter file = new FileWriter("rngGame.data")) {
                         file.write(gson.toJson(rngDefault));
                         System.out.println(LogColors.GREEN + LogColors.BOLD + "Successfully written defaults to " + "rngGame.data" + LogColors.RESET);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        System.err.println("Failed to write JSON to file: " + e.getMessage());
                     }
                 }
 

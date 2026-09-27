@@ -17,7 +17,7 @@ public class RestrictionManager {
 
     public static ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-    public static void restrictionSystem(Gson gson, String jsonOutput){
+    public static void restrictionSystem(Gson gson){
         scheduler.scheduleAtFixedRate(() -> {
             LocalTime now = LocalTime.now();
 

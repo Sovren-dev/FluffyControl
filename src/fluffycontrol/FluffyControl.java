@@ -47,7 +47,7 @@ public class FluffyControl {
         // Config Setup
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String jsonOutput = gson.toJson(Config.defaultConfig);
-        Config.doesConfigExist(gson, jsonOutput);
+        Config.doesConfigExist(jsonOutput);
 
         System.out.printf(LogColors.PURPLE + LogColors.BOLD + "Welcome to Fluffy Control version %s, %s!%n",version, username + LogColors.RESET);
         // GUI Setup
@@ -61,7 +61,7 @@ public class FluffyControl {
         }
         SwingUtilities.invokeLater(() -> new MainFrame(gson));
 
-        RestrictionManager.restrictionSystem(gson, jsonOutput);
+        RestrictionManager.restrictionSystem(gson);
     }
 
     // <editor-fold desc="Utility Launchers">

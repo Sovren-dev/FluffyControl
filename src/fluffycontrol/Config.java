@@ -74,7 +74,7 @@ public class Config {
                 System.out.println("DEBUG: " + config);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to read configuration file: " + e.getMessage());
         }
         return config;
     }
@@ -82,9 +82,9 @@ public class Config {
     public static void writeToFile(File fileName, String jsonOutput) {
         try (FileWriter file = new FileWriter(fileName)) {
             file.write(jsonOutput);
-            System.out.println(LogColors.GREEN + LogColors.BOLD + "Successfully written JSON object to " + configFile + LogColors.RESET);
+            System.out.println(LogColors.GREEN + LogColors.BOLD + "Successfully written JSON object to " + fileName + LogColors.RESET);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to write JSON to file: " + e.getMessage());
         }
     }
 
@@ -95,17 +95,12 @@ public class Config {
             "enp14s0"
     );
 
-    // Check if config file exsits and load file
-    public static void doesConfigExist(Gson gson, String jsonOutput) {
+    // Check if config file exists and load file
+    public static void doesConfigExist(String jsonOutput) {
         File fileName = new File(Config.configFile);
         if (fileName.isFile()) {
             System.out.println(LogColors.BLUE + LogColors.BOLD + "Config file found. Loading configuration..." + LogColors.RESET);
-            // Run code here:
-            System.out.println("Default Config: " + Config.defaultConfig);
-            //Config loadedConfig = Config.loadFile(gson, fileName); // Load file
-            //jsonOutput = gson.toJson(loadedConfig);
-            //Config.writeToFile(fileName, jsonOutput);
-
+            //System.out.println("Default Config: " + Config.defaultConfig);
         } else {
             // Write defaults
             System.out.println(LogColors.YELLOW + LogColors.BOLD + "[WARN] Config file not found. Creating new one..." + LogColors.RESET);
