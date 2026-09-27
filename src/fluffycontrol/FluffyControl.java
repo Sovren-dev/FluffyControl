@@ -16,7 +16,7 @@ import javax.swing.*;
  */
 public class FluffyControl {
     public static String username = System.getProperty("user.name");   
-    public static String version = "0.12.0-Linux";
+    public static String version = "0.13.0-Linux";
     public static boolean running = true;
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
