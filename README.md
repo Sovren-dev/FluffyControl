@@ -14,10 +14,12 @@ By default, the program enforces the following schedule:
 - **Off-hours (Bedtime)**: `23:30` to `08:00` (Network disabled + Warning popup)
 - **On-hours (Daytime)**: `08:00` to `23:30` (Network enabled)
 
-## Requirements
+## Requirements & Dependencies
 
-- **Operating System**: Linux
-- **Network Manager**: `NetworkManager` must be installed and running
+- Linux
+- NetworkManager must be installed and running
+- Java 25
+- Gson: `com.google.code.gson:gson:2.14.0`
 
 ## Configuration
 

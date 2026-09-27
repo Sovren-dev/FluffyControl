@@ -40,6 +40,9 @@ public class MainFrame extends JFrame {
             System.err.println("Could not find IconImage");
         }
 
+        new ConfigWindow(); // REMOVE this once you have a button for config
+
+
         JPanel rootPanel = new JPanel(new BorderLayout(10, 10));
         rootPanel.setBackground(backgroundColor);
         rootPanel.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
@@ -167,6 +170,7 @@ public class MainFrame extends JFrame {
         switch(type){
             case "rngGame" -> {
                 // Load json String instead here
+                //String[] rngGame = Gson.
                 String[] rngGame = {"Aegis Defenders",
                 "A.R.D. Alien Removal Division",
                 "ATLYSS",
@@ -287,7 +291,7 @@ public class MainFrame extends JFrame {
                 int r = rand.nextInt(rngGame.length);
                 System.out.printf("%n%s | Number: %d%n", rngGame[r], r);
                 return rngGame[r];
-            }            
+            }
             default -> System.out.println("Invalid GUI option");
         }
         return null;

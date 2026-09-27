@@ -4,13 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.12.0]
+
+## Added
+- Config JSON saving for the future configuration feature
+- LogColors which makes it easy to add colors to terminal.
+
 ## [0.11.0]
 
 ### Changed
 - warnWindow is now in its own class
 
 ### Added
-- Now a themed GUI with it's own Minimize, Exit and window drag.
+- Now a themed GUI with its own Minimize, Exit and window drag.
 - SetsLookAndFeel before SwingUtilities.invokeLater is called
 
 ### Removed

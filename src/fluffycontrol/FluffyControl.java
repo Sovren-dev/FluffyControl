@@ -1,5 +1,8 @@
 package fluffycontrol;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
@@ -13,12 +16,11 @@ import javax.swing.*;
  */
 public class FluffyControl {
     public static String username = System.getProperty("user.name");   
-    public static String version = "0.11.0-Linux";
+    public static String version = "0.12.0-Linux";
     public static boolean running = true;
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         onLaunch();
-        
         // Fallback CLI Mode
         while(running){
             System.out.printf("%nWhat would you like to access?");
@@ -44,7 +46,13 @@ public class FluffyControl {
         System.exit(0);
     }
 
-    private static void onLaunch() {        
+    private static void onLaunch() {
+        // Config Setup
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String jsonOutput = gson.toJson(Config.defaultConfig);
+        Config.doesConfigExist(gson, jsonOutput);
+
+
         System.out.printf("Welcome to Fluffy Control version %s, %s!%n",version, username);
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
