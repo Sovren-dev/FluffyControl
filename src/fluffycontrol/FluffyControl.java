@@ -34,6 +34,8 @@ public class FluffyControl {
             }
         }
 
+        System.out.printf("%nQuitting program...%n");
+
         RestrictionManager.scheduler.shutdown();
         try {
         Thread.sleep(50);
