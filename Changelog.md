@@ -6,23 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [0.13.0]
 
-## Added
+### Added
 - NetworkController device can now be changed in GUI
 - Bedtime and Wake-up time can now be changed in GUI
 
 
-## Changed
+### Changed
 - Disabled autostart GUI until feature is implemented
 - Included `wlp15s0` in network options
 - Reworked RestrictionManager to use ScheduledExecutorService instead of a Timer
 
-## Removed
+### Removed
 - Theme variable in config
 - GsonTest file
 
 ## [0.12.0]
 
-## Added
+### Added
 - Config JSON saving for the future configuration feature
 - LogColors which makes it easy to add colors to terminal.
 
