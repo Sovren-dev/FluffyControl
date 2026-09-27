@@ -15,11 +15,11 @@ import java.time.LocalTime;
 public class Config {
     // Test config options may not be in final version
 
-    private String theme = "";
-    private boolean autoStart = false;
-    private LocalTime bedtime = LocalTime.of(23, 30);
-    private LocalTime wakeup = LocalTime.of(8, 30);
-    private String INTERFACE_NAME = "enp14s0"; // or "eth0", "wlan0", etc. // Wi-Fi, Ethernet
+    private String theme;
+    private boolean autoStart;
+    private LocalTime bedtime;
+    private LocalTime wakeup;
+    private String INTERFACE_NAME; // or "eth0", "wlan0", etc. // Wi-Fi, Ethernet
 
     public Config(String theme, boolean autoStart, LocalTime bedtime, LocalTime wakeup, String INTERFACE_NAME) {
         this.theme = theme;
