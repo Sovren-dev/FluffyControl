@@ -33,4 +33,4 @@ Once started, make sure to set your correct network interface name in the config
 
 ## Experimental features
 
-- **rngGame**: 
+- **rngGame**: Games can be added or modified in the `rngGame.data` file, which is created when the user presses the Random Game button.
