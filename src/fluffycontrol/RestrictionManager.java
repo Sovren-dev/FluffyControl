@@ -29,7 +29,7 @@ public class RestrictionManager {
 
             // Nighttime. After 23:30 and before 8:00
             if (!isDayTime && !isNight) {
-                System.out.println("Get to bed");
+                System.out.printf("%nGet to bed");
                 SwingUtilities.invokeLater(warnWindow::new);
                 // Turn off Ethernet
                 NetworkController.turnOffNetwork(gson);

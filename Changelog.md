@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.14.0]
+
+### Added
+- Configurable days countdown timer
+
 ## [0.13.0]
 
 ### Added
@@ -41,7 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ## [0.10.0]
 
 ### Changed
-- Moved warnSystem into it's own class called RestrictionManager. 
+- Moved warnSystem into its own class called RestrictionManager. 
 - Changed networkController to be less redundant. 
 - GUI now uses SwingUtilities.invokeLater
 
@@ -93,7 +98,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ## [0.6.1-Windows]
 
 ### Changed
-- The system tray icon can now be left clicked to show or hide the user interface.
+- The system tray icon can now be left-clicked to show or hide the user interface.
 
 ## [0.6.0-Windows]
 

@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -18,12 +20,16 @@ public class Config {
     private LocalTime bedtime;
     private LocalTime wakeup;
     private String INTERFACE_NAME; // or "eth0", "wlan0", etc. // Wi-Fi, Ethernet
+    private String countdownMessage;
+    private LocalDate countdownEnd;
 
-    public Config(boolean autoStart, LocalTime bedtime, LocalTime wakeup, String INTERFACE_NAME) {
+    public Config(boolean autoStart, LocalTime bedtime, LocalTime wakeup, String INTERFACE_NAME, String countdownMessage, LocalDate countdownEnd) {
         this.autoStart = autoStart;
         this.bedtime = bedtime;
         this.wakeup = wakeup;
         this.INTERFACE_NAME = INTERFACE_NAME;
+        this.countdownMessage = countdownMessage;
+        this.countdownEnd = countdownEnd;
     }
 
     public void setAutoStart(boolean autoStart) {
@@ -42,6 +48,14 @@ public class Config {
         this.INTERFACE_NAME = INTERFACE_NAME;
     }
 
+    public void setCountdownEnd(LocalDate countdownEnd) {
+        this.countdownEnd = countdownEnd;
+    }
+
+    public void setCountdownMessage(String countdownMessage) {
+        this.countdownMessage = countdownMessage;
+    }
+
     public boolean isAutoStart() {
         return autoStart;
     }
@@ -58,9 +72,17 @@ public class Config {
         return INTERFACE_NAME;
     }
 
+    public LocalDate getCountdownEnd() {
+        return countdownEnd;
+    }
+
+    public String getCountdownMessage() {
+        return countdownMessage;
+    }
+
     @Override
     public String toString() {
-        return "AutoStart: " + autoStart + " bedtime: " + bedtime + " wakeup: " + wakeup + " INTERFACE_NAME: " + INTERFACE_NAME;
+        return "AutoStart: " + autoStart + " bedtime: " + bedtime + " wakeup: " + wakeup + " INTERFACE_NAME: " + INTERFACE_NAME + " countdownMessage: " + countdownMessage + " countdownEnd: " + countdownEnd;
     }
 
     public static String configFile = "config.json";
@@ -92,7 +114,9 @@ public class Config {
             false,
             LocalTime.of(23, 30),
             LocalTime.of(9, 0),
-            "enp14s0"
+            "enp14s0",
+            "Black Friday",
+            LocalDate.of(2026,11,27)
     );
 
     // Check if config file exists and load file

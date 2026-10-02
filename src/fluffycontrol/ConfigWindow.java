@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -20,17 +21,11 @@ import java.time.format.DateTimeFormatter;
  */
 public class ConfigWindow extends JFrame{
     private Point mouseClickPoint; // Store initial mouse position on click
-    private final Font menuFont = new Font("Monospaced", Font.BOLD, 12);
-
-    private final Color backgroundColor = new Color(0, 128, 128);
-    private final Color panelColor = new Color(174, 178, 188);
-    private final Color phosphorGreen = new Color(0, 255, 65);
-
 
     public ConfigWindow(Gson gson) {
         setTitle("Fluffy Control Config Panel v" + FluffyControl.version);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(720, 500);
+        setSize(720, 600);
         setLocationRelativeTo(null);
         setUndecorated(true);
         setResizable(false);
@@ -38,30 +33,30 @@ public class ConfigWindow extends JFrame{
         Config loadedConfig = Config.loadFile(gson, new File(Config.configFile), true);
 
         JPanel rootPanel = new JPanel(new BorderLayout(10, 10));
-        rootPanel.setBackground(backgroundColor);
+        rootPanel.setBackground(MainFrame.backgroundColor);
         rootPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         setContentPane(rootPanel);
 
         //<editor-fold desc="Top Menu Bar">
         JMenuBar menuBar = new JMenuBar();
-        menuBar.setBackground(panelColor);
+        menuBar.setBackground(MainFrame.panelColor);
         menuBar.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 
         JLabel label = new JLabel("  " + "FluffyControl.Config");
-        label.setFont(menuFont);
+        label.setFont(MainFrame.menuFont);
         menuBar.add(label);
 
         menuBar.add(Box.createHorizontalGlue());
 
         // Window buttons
         JButton hideBtn = new JButton("-");
-        hideBtn.setFont(menuFont);
+        hideBtn.setFont(MainFrame.menuFont);
         hideBtn.setFocusPainted(false);
         hideBtn.addActionListener(e -> fluffycontrol.ConfigWindow.this.setExtendedState(fluffycontrol.ConfigWindow.this.getExtendedState() | Frame.ICONIFIED));
         menuBar.add(hideBtn);
 
         JButton closeBtn = new JButton("X");
-        closeBtn.setFont(menuFont);
+        closeBtn.setFont(MainFrame.menuFont);
         closeBtn.setFocusPainted(false);
         closeBtn.addActionListener(e -> {
             MainFrame.theConfigWindow = null; // Makes sure that config window can be created again
@@ -94,7 +89,7 @@ public class ConfigWindow extends JFrame{
 
         //<editor-fold desc="Application Settings">
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBackground(panelColor);
+        mainPanel.setBackground(MainFrame.panelColor);
 
         mainPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createBevelBorder(BevelBorder.RAISED),
@@ -102,8 +97,8 @@ public class ConfigWindow extends JFrame{
         ));
 
         // Section Box
-        JPanel formGroup = new JPanel(new GridLayout(4, 2, 4, 3));
-        formGroup.setBackground(panelColor);
+        JPanel formGroup = new JPanel(new GridLayout(5, 2, 4, 3));
+        formGroup.setBackground(MainFrame.panelColor);
         TitledBorder groupBorder = BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
                 " [ Application Settings ] "
@@ -198,6 +193,36 @@ public class ConfigWindow extends JFrame{
             }
         });
 
+        // Countdown Days
+        JLabel countdownMessageLabel = createLabel("    Countdown message: ");
+        JTextField countdownMessageField = createTextField("Black Friday");
+        // Saved string is shown on start
+        String countdownStr = loadedConfig.getCountdownMessage();
+        if (countdownStr != null) {
+            countdownMessageField.setText(countdownStr);
+        }
+
+        JLabel countdownLabel = createLabel("    Countdown date: ");
+        JTextField countdownField = createTextField("2026-11-27");
+        LocalDate countdownEnd = loadedConfig.getCountdownEnd();
+        if (countdownEnd != null) { // pre-selects the last selection
+            countdownField.setText(countdownEnd.toString());
+        } else {
+            countdownField.setText("2026-11-27");
+        }
+
+        countdownField.addActionListener(e -> {
+            String input = countdownField.getText().trim();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            try{
+                LocalDate validatedTime = LocalDate.parse(input, formatter);
+                System.out.println(LogColors.BLUE + LogColors.BOLD + "Date set: " + validatedTime + LogColors.RESET);
+            } catch (DateTimeException ex) {
+                countdownField.setText("yyyy-MM-dd format only!");
+                System.out.println(LogColors.YELLOW + LogColors.BOLD + "[WARN] Invalid format. yyyy-MM-dd format only"  + LogColors.RESET);
+            }
+        });
+
         //formGroup.add(autoStartLabel);
         //formGroup.add(autoStartList);
         formGroup.add(bedtimeLabel);
@@ -206,10 +231,14 @@ public class ConfigWindow extends JFrame{
         formGroup.add(wakeupField);
         formGroup.add(interfaceNameLabel);
         formGroup.add(interfaceNameList);
+        formGroup.add(countdownMessageLabel);
+        formGroup.add(countdownMessageField);
+        formGroup.add(countdownLabel);
+        formGroup.add(countdownField);
         mainPanel.add(formGroup, BorderLayout.NORTH);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-        buttonPanel.setBackground(panelColor);
+        buttonPanel.setBackground(MainFrame.panelColor);
         JButton saveButton = createButton("[Save]");
         saveButton.addActionListener(e -> {
             // Save code here then ->
@@ -236,6 +265,23 @@ public class ConfigWindow extends JFrame{
                 System.out.println(LogColors.YELLOW + LogColors.BOLD + "[WARN] Invalid format. 24-Hour HH:mm format only"  + LogColors.RESET);
                 canSave = false;
             }
+            String input3 = countdownField.getText().trim();
+            formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            try {
+                LocalDate validatedTime = LocalDate.parse(input3, formatter);
+                System.out.println(LogColors.BLUE + LogColors.BOLD + "Date set: " + validatedTime + LogColors.RESET);
+                loadedConfig.setCountdownEnd(validatedTime);
+            } catch (DateTimeException ex) {
+                countdownField.setText("yyyy-MM-dd format only!");
+                System.out.println(LogColors.YELLOW + LogColors.BOLD + "[WARN] Invalid format. yyyy-MM-dd format only"  + LogColors.RESET);
+                canSave = false;
+            }
+
+            if(countdownStr != null) {
+                String currentText = countdownMessageField.getText().trim();
+                loadedConfig.setCountdownMessage(currentText);
+                System.out.println(LogColors.BLUE + LogColors.BOLD + "Countdown label set: " + currentText + LogColors.RESET);
+            }
 
             // Actual save
             if (canSave){
@@ -244,7 +290,7 @@ public class ConfigWindow extends JFrame{
             MainFrame.theConfigWindow = null; // Makes sure that config window can be created again
             ConfigWindow.this.dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Invalid format. Use 24-hour HH:mm format only.","Warning", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Invalid format.","Warning", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -267,14 +313,14 @@ public class ConfigWindow extends JFrame{
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(menuFont);
+        label.setFont(MainFrame.menuFont);
         label.setForeground(Color.BLACK);
         return label;
     }
 
     private JTextField createTextField(String text) {
         JTextField field = new JTextField(text);
-        field.setFont(menuFont);
+        field.setFont(MainFrame.menuFont);
         field.setBackground(Color.WHITE);
         field.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         return field;
@@ -282,8 +328,8 @@ public class ConfigWindow extends JFrame{
 
     private JButton createButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(menuFont);
-        button.setBackground(panelColor);
+        button.setFont(MainFrame.menuFont);
+        button.setBackground(MainFrame.panelColor);
         button.setForeground(Color.BLACK);
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createCompoundBorder(

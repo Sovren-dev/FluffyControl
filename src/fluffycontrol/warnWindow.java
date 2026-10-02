@@ -8,10 +8,11 @@ import java.awt.event.MouseEvent;
 
 public class warnWindow extends JFrame{
     private Point mouseClickPoint; // Store initial mouse position on click
-    private final Font menuFont = new Font("Monospaced", Font.BOLD, 12);
+    /*private final Font menuFont = new Font("Monospaced", Font.BOLD, 12);
     private final Color backgroundColor = new Color(0,128,128);
     private final  Color panelColor = new Color(174, 178, 188);
     private final Color phosphorGreen = new Color(0, 255, 65);
+    */
 
     warnWindow() {
         createWindow("Sleep time\nPlease head to bed now. :3\n>"); // Change console text here
@@ -26,30 +27,30 @@ public class warnWindow extends JFrame{
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel rootPanel = new JPanel(new BorderLayout(10, 10));
-        rootPanel.setBackground(backgroundColor);
+        rootPanel.setBackground(MainFrame.backgroundColor);
         rootPanel.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
         setContentPane(rootPanel);
 
         //<editor-fold desc="Top Menu Bar">
         JMenuBar menuBar = new JMenuBar();
-        menuBar.setBackground(panelColor);
+        menuBar.setBackground(MainFrame.panelColor);
         menuBar.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 
         JLabel label = new JLabel("  " + "FluffyControl.Warn");
-        label.setFont(menuFont);
+        label.setFont(MainFrame.menuFont);
         menuBar.add(label);
 
         menuBar.add(Box.createHorizontalGlue());
 
         // Minimize window
         JButton hideBtn = new JButton("-");
-        hideBtn.setFont(menuFont);
+        hideBtn.setFont(MainFrame.menuFont);
         hideBtn.setFocusPainted(false);
         hideBtn.addActionListener(e -> warnWindow.this.setExtendedState(warnWindow.this.getExtendedState() | Frame.ICONIFIED));
         menuBar.add(hideBtn);
         // Close window
         JButton closeBtn = new JButton("X");
-        closeBtn.setFont(menuFont);
+        closeBtn.setFont(MainFrame.menuFont);
         closeBtn.setFocusPainted(false);
         closeBtn.addActionListener(e -> warnWindow.this.dispose());
         menuBar.add(closeBtn);
@@ -80,7 +81,7 @@ public class warnWindow extends JFrame{
 
         //<editor-fold desc="Main Panel">
         JPanel mainPanel = new JPanel(new BorderLayout(10,10));
-        mainPanel.setBackground(panelColor);
+        mainPanel.setBackground(MainFrame.panelColor);
 
         mainPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createBevelBorder(BevelBorder.RAISED),
@@ -92,8 +93,8 @@ public class warnWindow extends JFrame{
         consoleOutput.setText(consoleText);
         consoleOutput.setFont(new Font("Monospaced", Font.PLAIN, 30));
         consoleOutput.setBackground(Color.BLACK);
-        consoleOutput.setForeground(phosphorGreen);
-        consoleOutput.setCaretColor(phosphorGreen);
+        consoleOutput.setForeground(MainFrame.phosphorGreen);
+        consoleOutput.setCaretColor(MainFrame.phosphorGreen);
 
         JScrollPane scrollPane = new JScrollPane(consoleOutput);
         scrollPane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));

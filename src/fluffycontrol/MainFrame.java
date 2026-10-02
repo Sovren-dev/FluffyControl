@@ -10,6 +10,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -21,14 +24,14 @@ import javax.swing.border.TitledBorder;
  * date: 2026-02-17
  * @author Sovren
  */
-public class MainFrame extends JFrame {    
+public class MainFrame extends JFrame {
     private static final Random rand = new Random();
     private Point mouseClickPoint; // Store initial mouse position on click
-    private final Font menuFont = new Font("Monospaced", Font.BOLD, 12);
+    public static final Font menuFont = new Font("Monospaced", Font.BOLD, 12);
 
-    private final Color backgroundColor = new Color(0,128,128);
-    private final  Color panelColor = new Color(174, 178, 188);
-    private final Color phosphorGreen = new Color(0, 255, 65);
+    public static final Color backgroundColor = new Color(0,128,128);
+    public static final  Color panelColor = new Color(174, 178, 188);
+    public static final Color phosphorGreen = new Color(0, 255, 65);
 
     public static ConfigWindow theConfigWindow = null;
 
@@ -115,7 +118,7 @@ public class MainFrame extends JFrame {
         ));
 
         // Section Box
-        JPanel formGroup = new JPanel(new GridLayout(2, 2, 8, 8));
+        JPanel formGroup = new JPanel(new GridLayout(3, 2, 8, 8));
         formGroup.setBackground(panelColor);
         TitledBorder groupBorder = BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
@@ -125,6 +128,34 @@ public class MainFrame extends JFrame {
         formGroup.setBorder(groupBorder);
 
         // Objects Here:
+        // Countdown
+        JLabel countdownLabel = createLabel(" Days until ?: ");
+        Config loadedConfig = Config.loadFile(gson, new File(Config.configFile),false);
+        // Check if config file failed to load
+        if(loadedConfig != null) {
+            String message = loadedConfig.getCountdownMessage();
+            // Fallback message
+            if(message == null) {
+                message = "Config file is missing countdownMessage";
+            }
+            countdownLabel.setText("  Days until " + message + ": ");
+        } else {
+            countdownLabel.setText("Error: Could not load configuration.");
+            System.err.println("[ERROR] Could not load configuration file");
+        }
+        JTextField countdownField = createTextField("Countdown here!");
+        countdownField.setEditable(false);
+        countdownField.setFocusable(false);
+        if(loadedConfig != null) {
+            countdownField.setText(dayCountdown(loadedConfig));
+        } else {
+            System.err.println("[ERROR] Could not load configuration file");
+        }
+
+        formGroup.add(countdownLabel);
+        formGroup.add(countdownField);
+
+        // RNG game
         JTextField outputField = createTextField(" Output");
         JButton randGameBtn = createButton("[ Random Game ]");
         randGameBtn.addActionListener(e -> {
@@ -134,8 +165,8 @@ public class MainFrame extends JFrame {
             outputField.setText(" " + text);
         });
 
-        formGroup.add(outputField);
         formGroup.add(randGameBtn);
+        formGroup.add(outputField);
         mainPanel.add(formGroup, BorderLayout.NORTH);
 
         // Open config
@@ -187,6 +218,25 @@ public class MainFrame extends JFrame {
         ));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
+    }
+
+    public static String dayCountdown(Config loadedConfig) {
+        String days = "";
+        LocalDate today = LocalDate.now();
+        LocalDate targetDate = loadedConfig.getCountdownEnd();
+        if(targetDate != null) {
+            long daysLeft = ChronoUnit.DAYS.between(today, targetDate);
+            if (daysLeft > 0) {
+                days = String.valueOf(daysLeft);
+            } else if (daysLeft == 0) {
+                days = String.valueOf(daysLeft);
+                System.out.println(LogColors.BLUE + LogColors.BOLD + "Countdown ended"+ LogColors.RESET);
+            } else {
+                days = String.valueOf(daysLeft);
+                System.out.println(LogColors.BLUE + LogColors.BOLD + "Countdown date has already passed" + LogColors.RESET);
+            }
+        }
+        return days;
     }
 
     // Links functions to buttons
