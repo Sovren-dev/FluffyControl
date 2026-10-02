@@ -32,5 +32,5 @@ Once started, make sure to set your correct network interface name in the config
 *You can find your active network interface name by running `nmcli device` in your terminal.*
 
 ## Experimental features
-
+- **Days Countdown**: Counts the days left until a specified date.
 - **rngGame**: Games can be added or modified in the `rngGame.data` file, which is created when the user presses the Random Game button.
